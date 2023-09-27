@@ -77,7 +77,6 @@ export default function Home() {
   const [id, setId] = useState(null);
   const [isEdit, setIsEdit] = useState(false);
 
-  const [todos, setTodos] = useState([]);
   const dispatch = useDispatch();
   const todoData = useSelector(state => state?.todo);
   console.log('todoData', todoData);
