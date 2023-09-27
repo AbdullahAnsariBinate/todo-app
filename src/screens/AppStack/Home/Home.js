@@ -62,7 +62,11 @@ import {
   Alert,
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
-import {AddAction, DeleteTodo} from '../../../redux/actions/AddTodoAction';
+import {
+  AddAction,
+  DeleteTodo,
+  EditTodo,
+} from '../../../redux/actions/AddTodoAction';
 import {colors} from '../../../utils/theme';
 import {logoutUser} from '../../../redux/actions/authAction';
 
@@ -70,6 +74,9 @@ export default function Home() {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [age, setAge] = useState('');
+  const [id, setId] = useState(null);
+  const [isEdit, setIsEdit] = useState(false);
+
   const [todos, setTodos] = useState([]);
   const dispatch = useDispatch();
   const todoData = useSelector(state => state?.todo);
@@ -78,7 +85,7 @@ export default function Home() {
     const newTodo = {
       id: todoData == [] ? 1 : todoData.length + 1,
       name: name,
-      descriptio: description,
+      description: description,
       age: age,
     };
     if (name == '' || description == '' || age == '') 0;
@@ -88,9 +95,32 @@ export default function Home() {
     setDescription('');
     setAge('');
   };
+  const editAddTodo = () => {
+    const payload = {
+      id: id,
+      name: name,
+      description: description,
+      age: age,
+    };
+    dispatch(EditTodo(payload));
+    setId(null)
+    setName('');
+    setDescription('');
+    setAge('');
+    setIsEdit(false)
+  };
 
   const handleDelete = id => {
     dispatch(DeleteTodo(id));
+  };
+
+  const handleEdit = todo => {
+    console.log('todosss', todo);
+    setId(todo?.id);
+    setName(todo?.name);
+    setDescription(todo?.description);
+    setAge(todo?.age);
+    setIsEdit(true);
   };
 
   return (
@@ -127,8 +157,11 @@ export default function Home() {
           onChangeText={text => setAge(text)}
           keyboardType="numeric"
         />
-
-        <Button title="Add" onPress={addTodo} />
+        {isEdit ? (
+          <Button title="Submit" onPress={editAddTodo} />
+        ) : (
+          <Button title="Add" onPress={addTodo} />
+        )}
       </View>
 
       <ScrollView style={styles.todoList}>
@@ -151,7 +184,8 @@ export default function Home() {
                   alignItems: 'center',
                   marginHorizontal: 20,
                   padding: 5,
-                }}>
+                }}
+                onPress={() => handleEdit(todo)}>
                 <Text style={{color: colors.white}}>Edit</Text>
               </TouchableOpacity>
               <TouchableOpacity

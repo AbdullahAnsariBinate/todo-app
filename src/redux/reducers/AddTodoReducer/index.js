@@ -1,4 +1,4 @@
-import {Add_Todo, Delete_Todo} from '../../constants';
+import {Add_Todo, Delete_Todo, Edit_Todo} from '../../constants';
 const initialState = [];
 
 export const AddReducer = (state = initialState, action) => {
@@ -8,9 +8,15 @@ export const AddReducer = (state = initialState, action) => {
     case Delete_Todo:
       let updatedTodo = state.filter(item => {
         return item.id !== action?.id;
-      })
-      console.log('updatedTodo', updatedTodo);
+      });
       return [...updatedTodo];
+    case Edit_Todo:
+      let editedList = state.map(item => {
+        if (item?.id == action?.payload?.id) {
+          return action.payload;
+        }
+      });
+      return [...editedList];
     default:
       return state;
   }
